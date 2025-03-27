@@ -1,0 +1,67 @@
+/* style.css */
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  margin: 0;
+  font-family: Arial, sans-serif;
+  text-align: center;
+}
+
+header, footer {
+  background: #f4f4f4;
+  padding: 1em;
+}
+
+header {
+  position: sticky;
+  top: 0;
+}
+
+footer {
+  margin-top: auto;
+}
+
+main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.entry {
+  width: 60%;
+  padding: 20px;
+  display: flex;
+  gap: 10px;
+}
+
+.entry input {
+  flex: 2; 
+}
+
+.entry select,
+.entry button {
+  flex: 1;
+  max-width: 120px;
+}
+
+.entry input,
+.entry select,
+.entry button {
+  padding: 12px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.entry button {
+  background: #007bff;
+  color: white;
+  cursor: pointer;
+  border: none;
+}
+
+.entry button:hover {
+  background: #0056b3;
+}
