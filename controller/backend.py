@@ -1,11 +1,16 @@
 """
-Backend for export-wiki, responsible for managing users, tokens
-and uploading resumes, and creating and returning cover letters
+controller API for export-wiki
+
+TODO https://www.geeksforgeeks.org/python/creating-first-rest-api-with-fastapi/ 
 """
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
+import os
+
+from model.util import get_and_generate_wiki_document, DocumentType
 
 app = FastAPI()
 
@@ -21,71 +26,45 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# TODO remove
-items = []
-
-
-class Item(BaseModel):
-    name: str
-    description: str
-
-
-# create an item
-@app.post("/items/", response_model=Item)
-async def create_item(item: Item):
-    items.append(item)
-    return item
-
-
-# get an item
-@app.get("/items/{item_id}", response_model=Item)
-async def read_item(item_id: int):
-    if item_id < 0 or item_id >= len(items):
-        raise HTTPException(status_code=404, detail="Item not found")
-    return items[item_id]
-
-
-# update an item
-@app.put("/items/{item_id}", response_model=Item)
-async def update_item(item_id: int, item: Item):
-    if item_id < 0 or item_id >= len(items):
-        raise HTTPException(status_code=404, detail="Item not found")
-
-    items[item_id] = item
-    return item
-
-
-# Delete an item
-@app.delete("/items/{item_id}", response_model=Item)
-async def delete_item(item_id: int):
-    if item_id < 0 or item_id >= len(items):
-        raise HTTPException(status_code=404, detail="Item not found")
-
-    deleted_item = items.pop(item_id)
-    return deleted_item
-
-
-class Count(BaseModel):
-    count: int
-
-
-count = 0
-
-
-# get the count
-@app.get("/count/", response_model=Count)
-async def get_count():
-    return {"count": count}
-
-
-# update an item
-@app.put("/count/increment", response_model=Count)
-async def increment_count():
-    global count
-    count += 1
-    return {"count": count}
-
 
 @app.get("/")
 def read_root():
     return {"Hello": "World"}
+
+
+@app.post("/export")
+def export_wiki_from_url(
+        wiki_url: str,
+        doc_type: DocumentType,
+        background_tasks: BackgroundTasks
+):
+    """
+    Given a wiki url and document type, validate the url, clone the wiki,
+    generate the document, and return the document as a file response.
+    Inputs: wiki_url, str representing user inputted url to validate
+            doc_type, DocumentType enum representing the type of document to create
+    Returns: FileResponse, the generated document file
+    """
+    try:
+        file_name = get_and_generate_wiki_document(wiki_url, doc_type)
+
+        if not os.path.exists(file_name):
+            raise HTTPException(
+                status_code=500, detail="File generation failed")
+
+        background_tasks.add_task(os.remove, file_name)
+
+        if os.path.exists("output.markdown"):
+            background_tasks.add_task(os.remove, "output.markdown")
+
+        return FileResponse(
+            path=file_name,
+            media_type={
+                "MARKDOWN": "text/markdown",
+                "HTML": "text/html",
+                "PDF": "application/pdf"
+            }[doc_type.value],
+            filename=file_name
+        )
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
