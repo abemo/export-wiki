@@ -11,7 +11,7 @@ body {
 header, footer {
   background: #f4f4f4;
   padding: 1em;
-}
+  }
 
 header {
   position: sticky;
