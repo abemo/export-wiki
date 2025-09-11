@@ -1,0 +1,43 @@
+Document type: MARKDOWN
+Cloned from: https://github.com/abemo/export-wiki.wiki.git
+Files and directories in the wiki:
+
+
+# Home.md
+
+Welcome to the export-wiki wiki! (page 1)
+
+
+# Introduction.md
+
+Welcome to the export-wiki wiki! (page 2)
+
+This is a wiki to test the functionality of the
+
+# Picture-page.md
+
+# AHHHHH (page 3)
+this page has a picture of a llama
+
+img source https://www.google.com/url?sa=i&url=https%3A%2F%2Ftwpark.com%2Fblog%2Falpaca-vs-llama-whats-the-difference%2F&psig=AOvVaw2kfl0GhBEpIRLe3wq-sWkD&ust=1743130672354000&source=images&cd=vfe&opi=89978449&ved=0CBQQjRxqFwoTCID1gvahqYwDFQAAAAAdAAAAABAE
+
+![llama](https://github.com/user-attachments/assets/f281742c-9c2f-45c9-bf8b-c25877a88cc9)
+
+
+
+# lists-and-tables.md
+
+page 4?
+
+* this is a list
+* listy
+
+1. first
+2. b
+3. last
+
+| Month    | Savings |
+| -------- | ------- |
+| January  | $250    |
+| February | $80     |
+| March    | $420    |
