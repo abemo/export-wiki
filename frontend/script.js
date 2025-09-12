@@ -1,7 +1,5 @@
 document.getElementById('export-button').addEventListener('click', exportDocument)
 async function exportDocument() {
-  const entryDisplay = document.getElementById('entry')
-
   const wikiUrl = document.getElementById('wiki-url').value
   const docType = document.getElementById('export-type').value
 
@@ -21,11 +19,22 @@ async function exportDocument() {
     })
 
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`)
+      let errorBody
+      try {
+        errorBody = await response.json()
+      } catch {
+        errorBody = { message: "Unknown error" }
+      }
+
+      const err = new Error(errorBody.message || `HTTP ${response.status}`)
+      err.status = response.status
+      err.body = errorBody
+      throw err
     }
     if (response.headers.get('content-type')?.includes('application/json')) {
       const data = await response.json()
-      statusDisplay.textContent = `Error: ${JSON.stringify(data)}`
+      console.error('Error from server:', data)
+      alert(data.message || "Unknown error")
     } else {
       const blob = await response.blob()
       const url = window.URL.createObjectURL(blob)
@@ -41,7 +50,13 @@ async function exportDocument() {
       statusDisplay.textContent = 'Download complete!'
     }
   } catch (error) {
-    statusDisplay.textContent = `Error: ${error.message}`
+    if (error.status === 422) {
+      alert("Invalid URL. Please enter a valid GitHub repository or wiki URL.")
+      statusDisplay.textContent = 'Invalid URL. Please try again.'
+      return
+    }
+    alert("An unexpected error occurred. Please try again.")
     console.error('Error fetching data', error)
+    statusDisplay.textContent = 'Error occurred. Please try again.'
   }
 }

@@ -8,7 +8,9 @@ import os
 import logging
 from fastapi import FastAPI, HTTPException, BackgroundTasks, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, JSONResponse
+from fastapi.exception_handlers import RequestValidationError
+from fastapi.exceptions import RequestValidationError
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
@@ -33,6 +35,25 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.exception_handler(HTTPException)
+async def http_exception_handler(request: Request, exc: HTTPException):
+    return JSONResponse({
+        "error": exc.detail if isinstance(exc.detail, str) else exc.detail.get("error", "UNKNOWN"),
+        "message": "An error occurred. Please try again."
+    })
+
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request, exc: RequestValidationError):
+    error_message = "Validation error: " + str(exc)
+    logger.warning(error_message)
+    return JSONResponse(
+        status_code=422,
+        content={"error": "INVALID_INPUT",
+                 "message": "Invalid request parameters."}
+    )
 
 
 class ConstrainedUrl(AnyUrl):
@@ -87,4 +108,6 @@ async def export_wiki_from_url(
     except Exception as e:
         logger.exception("Error exporting wiki")
         raise HTTPException(
-            status_code=400, detail="Failed to export wiki") from e
+            status_code=400,
+            detail={"error": "EXPORT_FAILED",
+                    "message": "Failed to export wiki"}) from e
