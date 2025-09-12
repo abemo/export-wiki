@@ -20,8 +20,6 @@ body {
 }
 
 header {
-  outline: black solid 1px;
-
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -42,8 +40,6 @@ header #github-logo {
 }
 
 main {
-  outline: black solid 1px;
-
   flex: 1;
   
   display: flex;
@@ -53,16 +49,41 @@ main {
   gap: 10vw;
 }
 
+main #entry, main #blurb {
+  border-radius: 0.5em;
+
+  background-color: #FFEAEE;
+
+  padding: 1em;
+}
+
 main #entry {
-  outline: black dashed 1px;
+  
+}
+
+main #entry #input-area {
+  display: flex;
+  gap: 1em;
+  height: 2.5em;
+}
+
+main #entry #input-area #export-button {
+  border-radius: 4px;
+  border: 1px solid black;
+  background-color: greenyellow;
+}
+
+main #entry #input-area #export-button:hover {
+  border-radius: 4px;
+  border: 1px solid black;
+  background-color: rgb(122, 181, 33);
 }
 
 main #blurb {
-  outline: black dashed 1px;
+  
 }
 
 footer {
-  outline: black solid 1px;
   background-color: var(--secondary-blue);
 
   display: flex;
