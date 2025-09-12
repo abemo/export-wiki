@@ -1,67 +1,76 @@
-/* style.css */
+:root {
+  --primary-yellow: #fbae3c;
+  --primary-blue: #358ed2;
+  --secondary-blue: #216497;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
 body {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  margin: 0;
-  font-family: Arial, sans-serif;
-  text-align: center;
-}
 
-header, footer {
-  background: #f4f4f4;
-  padding: 1em;
-  }
+  background-color: var(--primary-blue);
+  background-image: url("assets/background.svg");
+  background-size: cover;
+}
 
 header {
-  position: sticky;
-  top: 0;
+  outline: black solid 1px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: row;
+  padding: 0 3vw;
 }
 
-footer {
-  margin-top: auto;
+header #header-left {
+  display: flex;
+  align-items: center;
+  gap: 1vw;
+}
+
+header #github-logo {
+  height: 2.5em;
+  position:relative;
+  top: -0.2em;
 }
 
 main {
+  outline: black solid 1px;
+
   flex: 1;
+  
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  gap: 10vw;
+}
+
+main #entry {
+  outline: black dashed 1px;
+}
+
+main #blurb {
+  outline: black dashed 1px;
+}
+
+footer {
+  outline: black solid 1px;
+  background-color: var(--secondary-blue);
+
   display: flex;
   align-items: center;
-  justify-content: center;
+  flex-direction: column;
 }
 
-.entry {
-  width: 60%;
-  padding: 20px;
-  display: flex;
-  gap: 10px;
-}
-
-.entry input {
-  flex: 2; 
-}
-
-.entry select,
-.entry button {
-  flex: 1;
-  max-width: 120px;
-}
-
-.entry input,
-.entry select,
-.entry button {
-  padding: 12px;
-  font-size: 16px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-}
-
-.entry button {
-  background: #007bff;
-  color: white;
-  cursor: pointer;
-  border: none;
-}
-
-.entry button:hover {
-  background: #0056b3;
+footer p {
+  margin: 0;
+  padding: 0;
 }
