@@ -5,8 +5,7 @@ A website that allows users to give github wiki url, and provides different down
 TODOs:
 
 - [ ] pdf export not adding images
-- [ ] better frontend styles
-- [ ] Repo.clone_from could hang or attempt to clone very large repos. add a timeout and max repo size check
+- [ ] optimize mobile styles
 ------
 - [ ] update backend CORS for deployment
 - [ ] dockerize backend

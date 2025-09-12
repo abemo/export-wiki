@@ -8,6 +8,9 @@ from urllib.parse import urlparse
 from enum import Enum
 import re
 import tempfile
+from multiprocessing import Process, Queue
+import os
+import shutil
 
 import requests
 from git import Repo
@@ -73,17 +76,45 @@ def ensure_safe_url(candidate_url: str) -> str:
     return safe_url
 
 
-def clone_wiki(safe_url: str, temp_dir: str) -> tuple[list[tuple], str]:
+def _clone_worker(wiki_url: str, temp_dir: str, q: Queue):
+    """
+    Worker function to clone the wiki in a separate process
+    Puts the result (wiki_pages, error) in the queue
+    """
+    try:
+        repo = Repo.clone_from(wiki_url, temp_dir)
+        tree = repo.head.commit.tree
+        wiki_pages = [(entry, entry.name, entry.type) for entry in tree]
+        q.put((wiki_pages, None))
+    except Exception as e:
+        q.put((None, e))
+
+
+def clone_wiki(safe_url: str, temp_dir: str, timeout: int = 5) -> tuple[list[tuple], str]:
     """
     Clones the wiki from the safe_url into the temp_dir
+    Uses a separate process to enforce timeout if clone takes too long
     Returns a list of tuples containing (entry, name, type)
     """
     wiki_url = safe_url + ".wiki.git"
-    repo = Repo.clone_from(wiki_url, temp_dir)
-    tree = repo.head.commit.tree
-    wiki_pages = [(entry, entry.name, entry.type) for entry in tree]
+    q = Queue()
+    p = Process(target=_clone_worker, args=(wiki_url, temp_dir, q))
+    p.start()
+    p.join(timeout)
+
+    if p.is_alive():
+        p.terminate()
+        p.join()
+        if os.path.exists(temp_dir):
+            shutil.rmtree(temp_dir, ignore_errors=True)
+        raise TimeoutError(f"Cloning {wiki_url} exceeded {timeout} seconds")
+
+    wiki_pages, error = q.get()
+    if error:
+        raise error
     if not wiki_pages:
         raise ValueError("Wiki is empty")
+
     return wiki_pages, wiki_url
 
 

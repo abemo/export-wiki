@@ -7,6 +7,8 @@
 html, body {
   height: 100%;
   margin: 0;
+
+  font-family: Arial, sans-serif;
 }
 
 body {
@@ -58,13 +60,20 @@ main #entry, main #blurb {
 }
 
 main #entry {
-  
+  /* width: 40vw; */
+  flex: 1;
+  max-width: 600px;
+  min-width: 280px;
 }
 
 main #entry #input-area {
   display: flex;
   gap: 1em;
   height: 2.5em;
+}
+
+main #entry #input-area #wiki-url {
+  flex: 1;
 }
 
 main #entry #input-area #export-button {
@@ -80,11 +89,16 @@ main #entry #input-area #export-button:hover {
 }
 
 main #blurb {
-  
+  /* width: 30vw; */
+  flex: 1;
+  max-width: 400px;
+  min-width: 220px;
 }
 
 footer {
   background-color: var(--secondary-blue);
+
+  padding: 0.5em;
 
   display: flex;
   align-items: center;
@@ -94,4 +108,44 @@ footer {
 footer p {
   margin: 0;
   padding: 0;
+}
+
+@media (max-width: 890px) {
+  main {
+    flex-direction: column;
+    gap: 2em;
+    padding: 1em;
+  }
+}
+
+@media (orientation: portrait) {
+  main {
+    flex-direction: column;
+    gap: 2em;
+    padding: 1em;
+  }
+
+  header {
+    flex-direction: column;
+    gap: 0.5em;
+    padding: 1em;
+  }
+
+  header h1 {
+    font-size: 5em;
+  }
+
+  header h3 {
+    font-size: 1.5em;
+  }
+
+  main #entry,
+  main #blurb {
+    width: 100%;
+    max-width: 80vw;
+    height: auto;
+    max-height: 20vh;
+
+    font-size: larger;
+  }
 }
