@@ -1,10 +1,11 @@
 """
 controller API for export-wiki
 
-TODO https://www.geeksforgeeks.org/python/creating-first-rest-api-with-fastapi/ 
+Author: Abe Moore Odell 
 """
 
 import os
+import logging
 from fastapi import FastAPI, HTTPException, BackgroundTasks, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
@@ -14,10 +15,12 @@ from slowapi.errors import RateLimitExceeded
 from pydantic import BaseModel, AnyUrl
 from util import get_and_generate_wiki_document, DocumentType
 
-limiter = Limiter(key_func=get_remote_address)
+limiter = Limiter(key_func=get_remote_address, default_limits=["5/minute"])
 app = FastAPI()
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
+logger = logging.getLogger(__name__)
 
 origins = [
 
@@ -32,11 +35,16 @@ app.add_middleware(
 )
 
 
+class ConstrainedUrl(AnyUrl):
+    max_length = 300
+
+
 class ExportRequest(BaseModel):
-    wiki_url: AnyUrl
+    wiki_url: ConstrainedUrl
     doc_type: DocumentType
 
 
+# TODO return JSON if errors
 @app.post("/export")
 @limiter.limit("5/minute")
 async def export_wiki_from_url(
@@ -63,7 +71,7 @@ async def export_wiki_from_url(
 
         background_tasks.add_task(os.remove, file_name)
 
-        if os.path.exists("output.markdown"):
+        if doc_type != DocumentType.MARKDOWN and os.path.exists("output.markdown"):
             background_tasks.add_task(os.remove, "output.markdown")
 
         return FileResponse(
@@ -73,7 +81,10 @@ async def export_wiki_from_url(
                 "HTML": "text/html",
                 "PDF": "application/pdf"
             }[doc_type.value],
-            filename=file_name
+            filename=file_name,
+            background=background_tasks
         )
     except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        logger.exception("Error exporting wiki")
+        raise HTTPException(
+            status_code=400, detail="Failed to export wiki") from e
