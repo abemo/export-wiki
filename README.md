@@ -11,8 +11,3 @@ TODOs:
 
 - [ ] pdf export not adding images
 - [ ] optimize mobile styles
-------
-- [ ] update backend CORS for deployment
-- [ ] dockerize backend
-- [ ] deploy 
-  - [ ] backend AWS app runner
