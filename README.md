@@ -1,6 +1,11 @@
 # export-wiki
 A website that allows users to give github wiki url, and provides different download format options
 
+Using FastAPI for the backend.
+  - deployed to AWS using App Runner
+
+Static HTML/JS for the frontend.
+  - deployed to Github pages using Github actions CI/CD.
 
 TODOs:
 
@@ -11,6 +16,3 @@ TODOs:
 - [ ] dockerize backend
 - [ ] deploy 
   - [ ] backend AWS app runner
-  - [ ] frontend github pages
-- [ ] set up github CI/CD
-- [ ] add a modal pop up, if someone has used site a couple times asking for support

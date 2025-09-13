@@ -7,7 +7,7 @@ async function exportDocument() {
   statusDisplay.textContent = 'Processing...'
 
   try {
-    const response = await fetch('http://127.0.0.1:8000/export', {
+    const response = await fetch('https://export-wiki-backend-66108743706.us-west1.run.app/export', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
