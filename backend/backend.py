@@ -27,6 +27,7 @@ logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
 origins = [
+    "https://abemo.github.io",
     "https://abemo.github.io/export-wiki/",
     "https://www.abemo.github.io/export-wiki/",
     "http://localhost",
